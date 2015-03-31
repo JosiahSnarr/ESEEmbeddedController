@@ -25,6 +25,4 @@ void servo_init(void);
 
 void servo_angle(unsigned int angle);
 
-interrupt VectorNumber_Vtimch2 void servo_pulse(void);
-
 #endif
