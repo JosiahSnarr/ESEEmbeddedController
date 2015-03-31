@@ -24,7 +24,7 @@ void servo_init(void)
   pulseWidth += pulseWidth/PRE_ERR;   //Make up for the .25 error
   
   offTime = TIMER_OFF_TIME - pulseWidth;
-  offTime += offTime/PRE_ERR;
+  offTime += offTime/PRE_ERR;         //Make up for the .25 error
   
   //Configure TC2 as OC
   TIOS |= (TIOS_IOS2_MASK);
@@ -41,14 +41,15 @@ void servo_init(void)
 
 void servo_angle(unsigned int angle)
 {
-  if(angle <= 180){
+  if(angle <= 180)
+  {
     DisableInterrupts;  //Critical section (use of pulseWidth)
     
     pulseWidth = (angle+OFFSET)*OC_DELTA_10US;
     pulseWidth += pulseWidth/PRE_ERR;   //Make up for the .25 error
     
     offTime = TIMER_OFF_TIME - pulseWidth;
-    offTime += offTime/PRE_ERR;
+    offTime += offTime/PRE_ERR;         //Make up for the .25 error
     
     EnableInterrupts;   //End of critical section (use of pulseWidth)
   }
@@ -62,11 +63,14 @@ interrupt VectorNumber_Vtimch2 void servo_pulse(void)
   switch(riseFallO)
   {
       case TIMER_OC_ACTION_DRIVE_HIGH:
+      
         //Set high for length of high pulse width
         riseFallO = TIMER_OC_ACTION_DRIVE_LOW;
         TC2 = timeCapt + pulseWidth;
         break;
+        
       case TIMER_OC_ACTION_DRIVE_LOW:
+      
         //Set low for length of off time
         riseFallO = TIMER_OC_ACTION_DRIVE_HIGH;
         TC2 = timeCapt + offTime;
