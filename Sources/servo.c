@@ -21,10 +21,10 @@ void servo_init(void)
   
   //Initialize servo to be at 0°
   pulseWidth = (INIT_TIME+OFFSET)*OC_DELTA_10US;
-  pulseWidth += pulseWidth/PRE_ERR;   //Make up for the .25 error
+  pulseWidth += pulseWidth>>2;   //Make up for the .25 error (divide by 4)
   
   offTime = TIMER_OFF_TIME - pulseWidth;
-  offTime += offTime/PRE_ERR;         //Make up for the .25 error
+  offTime += offTime>>2;         //Make up for the .25 error (divide by 4)
   
   //Configure TC2 as OC
   TIOS |= (TIOS_IOS2_MASK);
@@ -46,10 +46,10 @@ void servo_angle(unsigned int angle)
     DisableInterrupts;  //Critical section (use of pulseWidth)
     
     pulseWidth = (angle+OFFSET)*OC_DELTA_10US;
-    pulseWidth += pulseWidth/PRE_ERR;   //Make up for the .25 error
+    pulseWidth += pulseWidth>>2;   //Make up for the .25 error (divide by 4)
     
     offTime = TIMER_OFF_TIME - pulseWidth;
-    offTime += offTime/PRE_ERR;         //Make up for the .25 error
+    offTime += offTime>>2;         //Make up for the .25 error (divide by 4)
     
     EnableInterrupts;   //End of critical section (use of pulseWidth)
   }
